@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gorilla/securecookie"
 	"log"
 	"net/http"
 
@@ -8,10 +9,14 @@ import (
 	"github.com/gorilla/mux"
 )
 
+var cookieHandler = securecookie.New(
+	securecookie.GenerateRandomKey(64),
+	securecookie.GenerateRandomKey(32))
+
 func main() {
 	r := mux.NewRouter()
-	routes.RegisterBookStoreRoutes(r)
+	routes.RegisterFlatRoutes(r)
 	http.Handle("/", r)
+	http.HandleFunc("/login", authcontroller.Login)
 	log.Fatal(http.ListenAndServe("localhost:9010", r))
-
 }

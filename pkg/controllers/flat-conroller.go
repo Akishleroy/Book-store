@@ -14,74 +14,76 @@ import (
 
 var NewFlat models.Flat
 
-func GetBook(w http.ResponseWriter, r *http.Request) {
-	newBooks := models.GetAllBooks()
-	res, _ := json.Marshal(newBooks)
+func GetFlat(w http.ResponseWriter, r *http.Request) {
+	newFlats := models.GetAllFlats()
+	res, _ := json.Marshal(newFlats)
 	w.Header().Set("Content-Type", "pkglication/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
-func GetBookById(w http.ResponseWriter, r *http.Request) {
+func GetFlatById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	bookId := vars["bookId"]
-	ID, err := strconv.ParseInt(bookId, 0, 0)
+	flatId := vars["flatId"]
+	ID, err := strconv.ParseInt(flatId, 0, 0)
 	if err != nil {
 		fmt.Println("eror while parsing")
 	}
-	bookDetails, _ := models.GetBookById(ID)
-	res, _ := json.Marshal(bookDetails)
+	flatDetails, _ := models.GetFlatById(ID)
+	res, _ := json.Marshal(flatDetails)
 	w.Header().Set("Content-type", "pkglocation/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
 
-func CreateBook(w http.ResponseWriter, r *http.Request) {
-	CreateBook := &models.Book{}
+func CreateFlat(w http.ResponseWriter, r *http.Request) {
+	CreateFlat := &models.Flat{}
 
-	fmt.Println(CreateBook)
-	utils.ParseBody(r, CreateBook)
-	b := CreateBook.CreateBook()
+	fmt.Println(CreateFlat)
+	utils.ParseBody(r, CreateFlat)
+	b := CreateFlat.CreateFlat()
 	res, _ := json.Marshal(b)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
+
 }
 
-func DeleteBook(w http.ResponseWriter, r *http.Request) {
+func DeleteFlat(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	bookId := vars["bookId"]
-	ID, err := strconv.ParseInt(bookId, 0, 0)
+	flatId := vars["flatId"]
+	ID, err := strconv.ParseInt(flatId, 0, 0)
 	if err != nil {
 		fmt.Println("error while parsing")
 	}
-	book := models.DeleteBook(ID)
-	res, _ := json.Marshal(book)
+	flat := models.DeleteFlat(ID)
+	res, _ := json.Marshal(flat)
 	w.Header().Set("Content-Type", "pkglocation/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 
 }
 
-func UpdateBook(w http.ResponseWriter, r *http.Request) {
-	var updateBook = &models.Book{}
-	utils.ParseBody(r, updateBook)
+func UpdateFlat(w http.ResponseWriter, r *http.Request) {
+	var updateFlat = &models.Flat{}
+	utils.ParseBody(r, updateFlat)
 	vars := mux.Vars(r)
-	bookId := vars["bookId"]
-	ID, err := strconv.ParseInt(bookId, 0, 0)
+	flatId := vars["flatId"]
+	ID, err := strconv.ParseInt(flatId, 0, 0)
 	if err != nil {
 		fmt.Println("error while parsing")
 	}
-	bookDetails, db := models.GetBookById(ID)
-	if updateBook.City != "" {
-		bookDetails.City = updateBook.City
+	flatDetails, db := models.GetFlatById(ID)
+	if updateFlat.City != "" {
+		flatDetails.City = updateFlat.City
 	}
-	bookDetails.Price = updateBook.Price
-	if updateBook.Address != "" {
-		bookDetails.Address = updateBook.Address
+	flatDetails.Price = updateFlat.Price
+	if updateFlat.Address != "" {
+		flatDetails.Address = updateFlat.Address
 	}
-	bookDetails.IsActive = updateBook.IsActive
-	db.Save(&bookDetails)
-	res, _ := json.Marshal(bookDetails)
+	flatDetails.IsActive = updateFlat.IsActive
+	db.Save(&flatDetails)
+	res, _ := json.Marshal(flatDetails)
 	w.Header().Set("Content-Type", "pkglocation/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
+
 }

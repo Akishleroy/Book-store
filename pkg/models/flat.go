@@ -9,7 +9,7 @@ import (
 
 var db *gorm.DB
 
-type Book struct {
+type Flat struct {
 	gorm.Model
 	Price    float64 `json:"price"`
 	Size     int     `json:"size"`
@@ -18,7 +18,7 @@ type Book struct {
 	IsActive bool    `json:"isActive"`
 }
 
-func (b Book) Validate() error {
+func (b Flat) Validate() error {
 	return validation.ValidateStruct(&b,
 		validation.Field(&b.Price, validation.Required),
 		validation.Field(&b.Size, validation.Required, validation.Min(1)),
@@ -30,10 +30,10 @@ func (b Book) Validate() error {
 func init() {
 	config.Connect()
 	db = config.GetDB()
-	db.AutoMigrate(&Book{})
+	db.AutoMigrate(&Flat{})
 }
 
-func (b *Book) CreateBook() error {
+func (b *Flat) CreateFlat() error {
 	err := b.Validate()
 	if err != nil {
 		return err
@@ -46,20 +46,20 @@ func (b *Book) CreateBook() error {
 
 }
 
-func GetAllBooks() []Book {
-	var Books []Book
-	db.Find(&Books)
-	return Books
+func GetAllFlats() []Flat {
+	var Flats []Flat
+	db.Find(&Flats)
+	return Flats
 }
 
-func GetBookById(Id int64) (*Book, *gorm.DB) {
-	var getBook Book
-	db := db.Where("ID=?", Id).Find(&getBook)
-	return &getBook, db
+func GetFlatById(Id int64) (*Flat, *gorm.DB) {
+	var getFlat Flat
+	db := db.Where("ID=?", Id).Find(&getFlat)
+	return &getFlat, db
 }
 
-func DeleteBook(ID int64) Book {
-	var book Book
+func DeleteFlat(ID int64) Flat {
+	var book Flat
 	db.Where("ID=?", ID).Delete(book)
 	return book
 }
