@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-var NewBook models.Book
+var NewFlat models.Flat
 
 func GetBook(w http.ResponseWriter, r *http.Request) {
 	newBooks := models.GetAllBooks()
@@ -37,6 +37,8 @@ func GetBookById(w http.ResponseWriter, r *http.Request) {
 
 func CreateBook(w http.ResponseWriter, r *http.Request) {
 	CreateBook := &models.Book{}
+
+	fmt.Println(CreateBook)
 	utils.ParseBody(r, CreateBook)
 	b := CreateBook.CreateBook()
 	res, _ := json.Marshal(b)
@@ -69,15 +71,14 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error while parsing")
 	}
 	bookDetails, db := models.GetBookById(ID)
-	if updateBook.Name != "" {
-		bookDetails.Name = updateBook.Name
+	if updateBook.City != "" {
+		bookDetails.City = updateBook.City
 	}
-	if updateBook.Author != "" {
-		bookDetails.Author = updateBook.Author
+	bookDetails.Price = updateBook.Price
+	if updateBook.Address != "" {
+		bookDetails.Address = updateBook.Address
 	}
-	if updateBook.Publication != "" {
-		bookDetails.Publication = updateBook.Publication
-	}
+	bookDetails.IsActive = updateBook.IsActive
 	db.Save(&bookDetails)
 	res, _ := json.Marshal(bookDetails)
 	w.Header().Set("Content-Type", "pkglocation/json")
