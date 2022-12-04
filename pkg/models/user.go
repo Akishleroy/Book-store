@@ -14,6 +14,7 @@ type User struct {
 	Password  string `json:"password"`
 	UserType  string `json:"usertype"`
 	UserName  string `json:"username"`
+	Booking   []Booking
 }
 
 func init() {

@@ -1,25 +1,19 @@
 package controllers
 
 import (
-	"crypto/md5"
-	"database/sql"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"github.com/Akishleroy/go-bookstore/pkg/config"
 	"github.com/Akishleroy/go-bookstore/pkg/models"
 	"github.com/Akishleroy/go-bookstore/pkg/utils"
 	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
-	"html/template"
 	"net/http"
 	"strconv"
 )
 
 var NewUser models.User
-var db gorm.DB
-var tmpl = template.Must(template.ParseGlob("templates/"))
+
+//var tmpl = template.Must(template.ParseGlob("templates/"))
 
 type ErrorResponse struct {
 	Err string
@@ -112,29 +106,29 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	username := r.Form.Get("username")
-	p := r.Form.Get("password")
-	password := GetMD5Hash(p)
-
-	db := config.GetDB()
-	var id int
-	var getUser models.User
-	row := db.Where("username=? AND password=?", username, password).Find(&getUser)
-	switch err := row.Scan(&id); err {
-	case sql.ErrNoRows:
-		tmpl.ExecuteTemplate(w, "Index", nil)
-	default:
-		tmpl.ExecuteTemplate(w, "Success", nil)
-	}
-	defer db.Close()
-}
-func GetMD5Hash(text string) string {
-	hasher := md5.New()
-	hasher.Write([]byte(text))
-	return hex.EncodeToString(hasher.Sum(nil))
-}
+//func Login(w http.ResponseWriter, r *http.Request) {
+//	r.ParseForm()
+//	username := r.Form.Get("username")
+//	p := r.Form.Get("password")
+//	password := GetMD5Hash(p)
+//
+//	db := config.GetDB()
+//	var id int
+//	var getUser models.User
+//	row := db.Where("username=? AND password=?", username, password).Find(&getUser)
+//	switch err := row.Scan(&id); err {
+//	case sql.ErrNoRows:
+//		tmpl.ExecuteTemplate(w, "Index", nil)
+//	default:
+//		tmpl.ExecuteTemplate(w, "Success", nil)
+//	}
+//	defer db.Close()
+//}
+//func GetMD5Hash(text string) string {
+//	hasher := md5.New()
+//	hasher.Write([]byte(text))
+//	return hex.EncodeToString(hasher.Sum(nil))
+//}
 
 //
 //func Login(w http.ResponseWriter, r *http.Request) {

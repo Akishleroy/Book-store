@@ -16,6 +16,7 @@ type Flat struct {
 	Address  string  `json:"address"`
 	City     string  `json:"city"`
 	IsActive bool    `json:"isActive"`
+	Booking  []Booking
 }
 
 func (b Flat) Validate() error {
@@ -50,6 +51,7 @@ func GetAllFlats() []Flat {
 	var Flats []Flat
 	db.Find(&Flats)
 	return Flats
+
 }
 
 func GetFlatById(Id int64) (*Flat, *gorm.DB) {

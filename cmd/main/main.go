@@ -17,6 +17,5 @@ func main() {
 	r := mux.NewRouter()
 	routes.RegisterFlatRoutes(r)
 	http.Handle("/", r)
-	http.HandleFunc("/login", authcontroller.Login)
 	log.Fatal(http.ListenAndServe("localhost:9010", r))
 }
