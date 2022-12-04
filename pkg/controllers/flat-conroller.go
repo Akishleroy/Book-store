@@ -87,3 +87,15 @@ func UpdateFlat(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 
 }
+
+func GetFlatByCity(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	city := vars["city"]
+	//city, err := strconv.ParseInt(city, 0, 0)
+	//
+	flatDetails := models.FilterByCity(city)
+	res, _ := json.Marshal(flatDetails)
+	w.Header().Set("Content-Type", "pkglication/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}

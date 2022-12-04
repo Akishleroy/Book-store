@@ -5,6 +5,8 @@ import (
 	"github.com/Akishleroy/go-bookstore/pkg/config"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/jinzhu/gorm"
+	"strconv"
+	"strings"
 )
 
 var db *gorm.DB
@@ -64,4 +66,23 @@ func DeleteFlat(ID int64) Flat {
 	var book Flat
 	db.Where("ID=?", ID).Delete(book)
 	return book
+}
+
+func FilterByCity(city string) []Flat {
+	var Flats []Flat
+	db.Where("city=?", city).Find(&Flats)
+	return Flats
+}
+
+func FilterByPrice(price string) []Flat {
+	s := strings.Split("price", ":")
+	//var price1, price2 int
+	price1, err := strconv.Atoi(s[0])
+	price2, err := strconv.Atoi(s[1])
+	if err != nil {
+		fmt.Println("Error during conversion")
+	}
+	var Flats []Flat
+	db.Where("price>?", price1).Find(&Flats).Where("price<?", price2).Find(&Flats)
+	return Flats
 }

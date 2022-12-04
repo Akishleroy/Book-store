@@ -32,7 +32,7 @@ func (u User) Validate() error {
 	)
 }
 
-func (u *User) CreateUser() error {
+func (u *User) RegisterNewUser() error {
 	err := u.Validate()
 	if err != nil {
 		return err
@@ -55,10 +55,13 @@ func GetUserById(Id int64) (*User, *gorm.DB) {
 	return &getUser, db
 }
 
-func Login(Email string) (*User, *gorm.DB) {
+func (u *User) Login() string {
 	var getUser User
-	db := db.Where("Email=?", Email).Find(&getUser)
-	return &getUser, db
+	db.Where("user_name=? AND password=?", u.UserName, u.Password).Find(&getUser)
+	if getUser.UserName == u.UserName && u.Password == getUser.Password {
+		return "successfully logged in"
+	}
+	return "Incorrect password or username"
 }
 
 func DeleteUser(ID int64) User {

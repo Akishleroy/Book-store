@@ -7,6 +7,7 @@ import (
 	"github.com/Akishleroy/go-bookstore/pkg/utils"
 	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -43,18 +44,19 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	CreateUser := &models.User{}
-	pass, err := bcrypt.GenerateFromPassword([]byte(CreateUser.Password), bcrypt.DefaultCost)
-	if err != nil {
-		fmt.Println(err)
-		err := ErrorResponse{
-			Err: "Password Encryption  failed",
-		}
-		json.NewEncoder(w).Encode(err)
-	}
+	//pass, err := bcrypt.GenerateFromPassword([]byte(CreateUser.Password), bcrypt.DefaultCost)
+	//if err != nil {
+	//	fmt.Println(err)
+	//	err := ErrorResponse{
+	//		Err: "Password Encryption  failed",
+	//	}
+	//	json.NewEncoder(w).Encode(err)
+	//}
 
-	CreateUser.Password = string(pass)
+	CreateUser.Password = getHash([]byte(CreateUser.Password))
 	utils.ParseBody(r, CreateUser)
-	u := CreateUser.CreateUser()
+	fmt.Println(CreateUser.Password)
+	u := CreateUser.RegisterNewUser()
 	res, _ := json.Marshal(u)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
@@ -104,6 +106,20 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "pkglocation/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
+}
+func Login(w http.ResponseWriter, r *http.Request) {
+	user := &models.User{}
+	utils.ParseBody(r, user)
+	u := user.Login()
+	//res, _ := json.Marshal(u)
+	fmt.Println(u)
+}
+func getHash(pwd []byte) string {
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
+	if err != nil {
+		log.Println(err)
+	}
+	return string(hash)
 }
 
 //func Login(w http.ResponseWriter, r *http.Request) {
