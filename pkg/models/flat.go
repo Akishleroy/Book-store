@@ -5,8 +5,6 @@ import (
 	"github.com/Akishleroy/go-bookstore/pkg/config"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/jinzhu/gorm"
-	"strconv"
-	"strings"
 )
 
 var db *gorm.DB
@@ -74,15 +72,44 @@ func FilterByCity(city string) []Flat {
 	return Flats
 }
 
-func FilterByPrice(price string) []Flat {
-	s := strings.Split("price", ":")
-	//var price1, price2 int
-	price1, err := strconv.Atoi(s[0])
-	price2, err := strconv.Atoi(s[1])
-	if err != nil {
-		fmt.Println("Error during conversion")
+func GetFlatsByFilter(params [5]string) []Flat {
+	var getFlats []Flat
+	if params[0] != "" {
+		city := params[0]
+		db.Where("city=?", city).Find(&getFlats)
+		return getFlats
 	}
-	var Flats []Flat
-	db.Where("price>?", price1).Find(&Flats).Where("price<?", price2).Find(&Flats)
-	return Flats
+	if params[1] != "" && params[2] != "" {
+		fromSize := params[1]
+		toSize := params[2]
+		db.Where("size>=? AND size<=?", fromSize, toSize).Find(&getFlats)
+		return getFlats
+	}
+	if params[1] != "" && params[2] == "" {
+		fromSize := params[1]
+		db.Where("size>=?", fromSize).Find(&getFlats)
+		return getFlats
+	}
+	if params[1] == "" && params[2] != "" {
+		toSize := params[2]
+		db.Where("size<=?", toSize).Find(&getFlats)
+		return getFlats
+	}
+	if params[3] != "" && params[4] != "" {
+		fromPrice := params[3]
+		toPrice := params[4]
+		db.Where("price>=? AND price<=?", fromPrice, toPrice).Find(&getFlats)
+		return getFlats
+	}
+	if params[3] != "" && params[4] == "" {
+		fromPrice := params[3]
+		db.Where("price>=?", fromPrice).Find(&getFlats)
+		return getFlats
+	}
+	if params[3] == "" && params[4] != "" {
+		toPrice := params[4]
+		db.Where("price<=?", toPrice).Find(&getFlats)
+		return getFlats
+	}
+	return getFlats
 }

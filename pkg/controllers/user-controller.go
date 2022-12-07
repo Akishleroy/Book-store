@@ -107,13 +107,14 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
-func Login(w http.ResponseWriter, r *http.Request) {
-	user := &models.User{}
-	utils.ParseBody(r, user)
-	u := user.Login()
-	//res, _ := json.Marshal(u)
-	fmt.Println(u)
-}
+
+//	func Login(w http.ResponseWriter, r *http.Request) {
+//		user := &models.User{}
+//		utils.ParseBody(r, user)
+//		u := user.Login()
+//		//res, _ := json.Marshal(u)
+//		fmt.Println(u)
+//	}
 func getHash(pwd []byte) string {
 	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
 	if err != nil {

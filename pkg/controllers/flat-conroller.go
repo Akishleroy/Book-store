@@ -99,3 +99,24 @@ func GetFlatByCity(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
 }
+
+func GetFlatsByFilter(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("function works")
+	city := r.URL.Query().Get("city")
+	fromSize := r.URL.Query().Get("fromSize")
+	toSize := r.URL.Query().Get("toSize")
+	fromPrice := r.URL.Query().Get("fromPrice")
+	toPrice := r.URL.Query().Get("toPrice")
+	fmt.Println(city, fromSize, toSize, fromPrice, toPrice)
+	var params [5]string
+	params[0] = city
+	params[1] = fromSize
+	params[2] = toSize
+	params[3] = fromPrice
+	params[4] = toPrice
+	flatDetails := models.GetFlatsByFilter(params)
+	res, _ := json.Marshal(flatDetails)
+	w.Header().Set("Content-Type", "pkglocation/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
