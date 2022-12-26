@@ -32,7 +32,7 @@ func CreateToken(userId uint) (string, error) {
 	return signedAccessToken, nil
 }
 
-func extractToken(tokenStr string) (int64, error) {
+func ExtractToken(tokenStr string) (uint, error) {
 
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -53,7 +53,7 @@ func extractToken(tokenStr string) (int64, error) {
 			return 0, fmt.Errorf("No such key 'id'")
 		}
 
-		return int64(userId), nil
+		return uint(userId), nil
 	}
 
 	return 0, fmt.Errorf("Invalid token. Map claims not found")

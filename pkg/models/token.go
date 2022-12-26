@@ -23,6 +23,12 @@ func (t *Token) InsertToken() error {
 	return nil
 }
 
+func GetUserByToken(tokenVal string) (*Token, *gorm.DB) {
+	var token Token
+	db := db.Where("token=?", tokenVal).Find(&token)
+	return &token, db
+}
+
 func GetTokenById(Id int64) (*Token, *gorm.DB) {
 	var token Token
 	db := db.Where("ID=?", Id).Find(&token)
