@@ -5,12 +5,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-type Server struct {
-	tokens       map[int64]*Token
-	accessSecret string
-	accessTTL    int
-}
-
 var (
 	db *gorm.DB
 )
