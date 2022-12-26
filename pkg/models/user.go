@@ -12,7 +12,7 @@ type User struct {
 	LastName  string `json:"lastname"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	UserType  string `json:"usertype"`
+	UserType  int    `json:"usertype"`
 	UserName  string `json:"username"`
 	Booking   []Booking
 }
@@ -29,6 +29,7 @@ func (u User) Validate() error {
 		validation.Field(&u.FirstName, validation.Required),
 		validation.Field(&u.LastName, validation.Required),
 		validation.Field(&u.Password, validation.Required),
+		validation.Field(&u.UserType, validation.Required, validation.Min(1), validation.Max(3)),
 	)
 }
 

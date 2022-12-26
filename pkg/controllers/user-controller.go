@@ -44,15 +44,6 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	CreateUser := &models.User{}
-	//pass, err := bcrypt.GenerateFromPassword([]byte(CreateUser.Password), bcrypt.DefaultCost)
-	//if err != nil {
-	//	fmt.Println(err)
-	//	err := ErrorResponse{
-	//		Err: "Password Encryption  failed",
-	//	}
-	//	json.NewEncoder(w).Encode(err)
-	//}
-
 	CreateUser.Password = getHash([]byte(CreateUser.Password))
 	utils.ParseBody(r, CreateUser)
 	fmt.Println(CreateUser.Password)
@@ -98,7 +89,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if updateUser.Password != "" {
 		userDetails.Password = updateUser.Password
 	}
-	if updateUser.UserType != "" {
+	if updateUser.UserType >= 1 && updateUser.UserType <= 3 {
 		userDetails.UserType = updateUser.UserType
 	}
 	db.Save(&userDetails)
