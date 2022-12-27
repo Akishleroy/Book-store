@@ -13,30 +13,30 @@ type Token struct {
 
 func init() {
 	config.Connect()
-	db = config.GetDB()
-	db.AutoMigrate(&Token{})
+	Db = config.GetDB()
+	Db.AutoMigrate(&Token{})
 }
 
 func (t *Token) InsertToken() error {
-	db.NewRecord(t)
-	db.Create(&t)
+	Db.NewRecord(t)
+	Db.Create(&t)
 	return nil
 }
 
 func GetUserByToken(tokenVal string) (*Token, *gorm.DB) {
 	var token Token
-	db := db.Where("token=?", tokenVal).Find(&token)
+	db := Db.Where("token=?", tokenVal).Find(&token)
 	return &token, db
 }
 
 func GetTokenById(Id int64) (*Token, *gorm.DB) {
 	var token Token
-	db := db.Where("ID=?", Id).Find(&token)
+	db := Db.Where("ID=?", Id).Find(&token)
 	return &token, db
 }
 
 func DeleteToken(ID int64) Token {
 	var token Token
-	db.Where("ID=?", ID).Delete(token)
+	Db.Where("ID=?", ID).Delete(token)
 	return token
 }

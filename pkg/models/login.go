@@ -13,7 +13,7 @@ type LoginInput struct {
 func (l *LoginInput) Login() (User, string, error) {
 	var getUser User
 	fmt.Println(l.UserName, l.Password)
-	db.Where("user_name=? AND password=?", l.UserName, l.Password).Find(&getUser)
+	Db.Where("user_name=? AND password=?", l.UserName, l.Password).Find(&getUser)
 	if getUser.UserName == l.UserName && l.Password == getUser.Password {
 		token, err := jwt.CreateToken(getUser.ID)
 		tokenModel := &Token{

@@ -22,7 +22,7 @@ var RegisterFlatRoutes = func(router *mux.Router) {
 	router.HandleFunc("/user/{userId}", controllers.UpdateUser).Methods("PUT")
 	router.HandleFunc("/user/{userId}", controllers.DeleteUser).Methods("DELETE")
 	//booking
-	router.HandleFunc("/booking", Auth(controllers.CreateBooking)).Methods("POST")
+	router.HandleFunc("/booking/{flatId}", Auth(controllers.CreateBooking)).Methods("POST")
 	router.HandleFunc("/booking", Auth(controllers.GetBooking)).Methods("GET")
 	router.HandleFunc("/booking/{bookingId}", Auth(controllers.GetBookingById)).Methods("GET")
 	router.HandleFunc("/bookings/{userId}", Auth(controllers.GetBookingByUserId)).Methods("GET")

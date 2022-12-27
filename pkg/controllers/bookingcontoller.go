@@ -3,13 +3,18 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Akishleroy/go-bookstore/pkg/jwt"
 	"github.com/Akishleroy/go-bookstore/pkg/models"
 	"github.com/Akishleroy/go-bookstore/pkg/utils"
 	"github.com/gorilla/mux"
+	"log"
+	"time"
+
+	//"github.com/jinzhu/gorm"
 	"net/http"
 	"strconv"
 )
-
+//var db *gorm.DB
 var NewBooking models.Booking
 
 func GetBooking(w http.ResponseWriter, r *http.Request) {
@@ -48,26 +53,48 @@ func GetBookingByUserId(w http.ResponseWriter, r *http.Request) {
 }
 func CreateBooking(w http.ResponseWriter, r *http.Request) {
 	CreateBooking := &models.Booking{}
-	//vars := mux.Vars(r)
-	//userId := vars["userId"]
-	//flatId := vars["flatId"]
-	//flatID, err1 := strconv.ParseInt(flatId, 0, 0)
-	//userID, err2 := strconv.ParseInt(userId, 0, 0)
-	//if err1 != nil {
-	//	fmt.Println("error while parsing")
-	//}
-	//if err2 != nil {
-	//	fmt.Println("error while parsing")
-	//}
-	//flatDetails, _ := models.GetFlatById(flatID)
-	//userDetails, _ := models.GetUserById(userID)
-	//CreateBooking.User = userDetails
-	//CreateBooking.Flat = flatDetails
 	utils.ParseBody(r, CreateBooking)
-	b := CreateBooking.CreateBooking()
-	res, _ := json.Marshal(b)
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
+	startDate, _ := time.Parse("2006-01-02", CreateBooking.StartDate)
+	endDate, _ := time.Parse("2006-01-02", CreateBooking.EndDate)
+	fmt.Println(startDate)
+	fmt.Println(CreateBooking.StartDate)
+	vars := mux.Vars(r)
+	flatId := vars["flatId"]
+	var header = r.Header.Get("Authorization")
+
+	userId, _ := jwt.ExtractToken(header[7:])
+	flatID, err := strconv.ParseInt(flatId, 0, 0)
+	if err != nil {
+		fmt.Println("error while parsing")
+	}
+	var bookings []models.Booking
+	//fmt.Println("Flag %d", userId )
+
+	models.Db.Where("flat_id=?", flatID).Find(&bookings)
+	fmt.Println(bookings)
+	if (len(bookings) != 0){
+		//fmt.Println("ANOTHER %d", userId )
+		for i := 0; i < len(bookings); i++ {
+			start_date, _:= time.Parse("2006-01-02", bookings[i].StartDate)
+			end_date, _:= time.Parse("2006-01-02", bookings[i].StartDate)
+			if (start_date.After(startDate) && end_date.Before(startDate)) {
+				log.Fatalf("Such flat is booked on that date %s", bookings[i].StartDate)
+			}
+			if (start_date.After(endDate) && end_date.Before(endDate)) {
+				log.Fatalf("Such flat is booked on that date %s", bookings[i].EndDate)
+			}
+		}
+	} else {
+		CreateBooking.UserId = userId
+		CreateBooking.FlatId = uint(flatID)
+		//utils.ParseBody(r, CreateBooking)
+		//fmt.Println(CreateBooking)
+		b := CreateBooking.CreateBooking()
+		res, _ := json.Marshal(b)
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
+
 
 }
 
@@ -114,9 +141,10 @@ func UpdateBooking(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("error while parsing")
 	}
 	bookingDetails, db := models.GetBookingById(ID)
-	bookingDetails.UserID = updateBooking.UserID
+	bookingDetails.UserId = updateBooking.UserId
 	bookingDetails.FlatId = updateBooking.FlatId
-	bookingDetails.Time = updateBooking.Time
+	bookingDetails.StartDate = updateBooking.StartDate
+	bookingDetails.EndDate = updateBooking.EndDate
 
 	db.Save(&bookingDetails)
 	res, _ := json.Marshal(bookingDetails)
