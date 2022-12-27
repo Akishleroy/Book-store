@@ -42,9 +42,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	CreateUser := &models.User{}
-	CreateUser.Password = getHash([]byte(CreateUser.Password))
 	utils.ParseBody(r, CreateUser)
-	fmt.Println(CreateUser.Password)
 	u := CreateUser.RegisterNewUser()
 	res, _ := json.Marshal(u)
 	w.WriteHeader(http.StatusOK)

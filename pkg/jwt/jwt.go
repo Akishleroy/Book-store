@@ -18,7 +18,7 @@ type ServerTokens struct {
 	accessTTL    int
 }
 
-func CreateToken(userId uint, userRole uint) (string, error) {
+func CreateToken(userId uint, userRole int64) (string, error) {
 	accessTokenExp := time.Now().Add(time.Minute * time.Duration(86400)).Unix()
 
 	accessTokenClaims := jwt.MapClaims{}
@@ -33,7 +33,7 @@ func CreateToken(userId uint, userRole uint) (string, error) {
 	return signedAccessToken, nil
 }
 
-func ExtractToken(tokenStr string) (uint, uint, error) {
+func ExtractToken(tokenStr string) (uint, int64, error) {
 
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -55,7 +55,7 @@ func ExtractToken(tokenStr string) (uint, uint, error) {
 			return 0, 0, fmt.Errorf("No such key 'id'")
 		}
 
-		return uint(userId), uint(userType), nil
+		return uint(userId), int64(userType), nil
 	}
 
 	return 0, 0, fmt.Errorf("Invalid token. Map claims not found")
