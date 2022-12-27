@@ -7,7 +7,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-var db *gorm.DB
+var Db *gorm.DB
 
 type Flat struct {
 	gorm.Model
@@ -16,7 +16,6 @@ type Flat struct {
 	Address  string  `json:"address"`
 	City     string  `json:"city"`
 	IsActive bool    `json:"isActive"`
-	Booking  []Booking
 }
 
 func (b Flat) Validate() error {
@@ -30,8 +29,8 @@ func (b Flat) Validate() error {
 
 func init() {
 	config.Connect()
-	db = config.GetDB()
-	db.AutoMigrate(&Flat{})
+	Db = config.GetDB()
+	Db.AutoMigrate(&Flat{})
 }
 
 func (b *Flat) CreateFlat() error {
@@ -40,8 +39,8 @@ func (b *Flat) CreateFlat() error {
 		return err
 	} else {
 		fmt.Printf("err = %T\n", err)
-		db.NewRecord(b)
-		db.Create(&b)
+		Db.NewRecord(b)
+		Db.Create(&b)
 		return err
 	}
 
@@ -49,26 +48,26 @@ func (b *Flat) CreateFlat() error {
 
 func GetAllFlats() []Flat {
 	var Flats []Flat
-	db.Find(&Flats)
+	Db.Find(&Flats)
 	return Flats
 
 }
 
 func GetFlatById(Id int64) (*Flat, *gorm.DB) {
 	var getFlat Flat
-	db := db.Where("ID=?", Id).Find(&getFlat)
+	db := Db.Where("ID=?", Id).Find(&getFlat)
 	return &getFlat, db
 }
 
 func DeleteFlat(ID int64) Flat {
 	var book Flat
-	db.Where("ID=?", ID).Delete(book)
+	Db.Where("ID=?", ID).Delete(book)
 	return book
 }
 
 func FilterByCity(city string) []Flat {
 	var Flats []Flat
-	db.Where("city=?", city).Find(&Flats)
+	Db.Where("city=?", city).Find(&Flats)
 	return Flats
 }
 
@@ -76,39 +75,39 @@ func GetFlatsByFilter(params [5]string) []Flat {
 	var getFlats []Flat
 	if params[0] != "" {
 		city := params[0]
-		db.Where("city=?", city).Find(&getFlats)
+		Db.Where("city=?", city).Find(&getFlats)
 		return getFlats
 	}
 	if params[1] != "" && params[2] != "" {
 		fromSize := params[1]
 		toSize := params[2]
-		db.Where("size>=? AND size<=?", fromSize, toSize).Find(&getFlats)
+		Db.Where("size>=? AND size<=?", fromSize, toSize).Find(&getFlats)
 		return getFlats
 	}
 	if params[1] != "" && params[2] == "" {
 		fromSize := params[1]
-		db.Where("size>=?", fromSize).Find(&getFlats)
+		Db.Where("size>=?", fromSize).Find(&getFlats)
 		return getFlats
 	}
 	if params[1] == "" && params[2] != "" {
 		toSize := params[2]
-		db.Where("size<=?", toSize).Find(&getFlats)
+		Db.Where("size<=?", toSize).Find(&getFlats)
 		return getFlats
 	}
 	if params[3] != "" && params[4] != "" {
 		fromPrice := params[3]
 		toPrice := params[4]
-		db.Where("price>=? AND price<=?", fromPrice, toPrice).Find(&getFlats)
+		Db.Where("price>=? AND price<=?", fromPrice, toPrice).Find(&getFlats)
 		return getFlats
 	}
 	if params[3] != "" && params[4] == "" {
 		fromPrice := params[3]
-		db.Where("price>=?", fromPrice).Find(&getFlats)
+		Db.Where("price>=?", fromPrice).Find(&getFlats)
 		return getFlats
 	}
 	if params[3] == "" && params[4] != "" {
 		toPrice := params[4]
-		db.Where("price<=?", toPrice).Find(&getFlats)
+		Db.Where("price<=?", toPrice).Find(&getFlats)
 		return getFlats
 	}
 	return getFlats

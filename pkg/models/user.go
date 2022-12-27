@@ -14,13 +14,12 @@ type User struct {
 	Password  string `json:"password"`
 	UserType  string `json:"usertype"`
 	UserName  string `json:"username"`
-	Booking   []Booking
 }
 
 func init() {
 	config.Connect()
-	db = config.GetDB()
-	db.AutoMigrate(&User{})
+	Db = config.GetDB()
+	Db.AutoMigrate(&User{})
 }
 
 func (u User) Validate() error {
@@ -37,27 +36,27 @@ func (u *User) RegisterNewUser() error {
 	if err != nil {
 		return err
 	} else {
-		db.NewRecord(u)
-		db.Create(&u)
+		Db.NewRecord(u)
+		Db.Create(&u)
 		return err
 	}
 }
 
 func GetAllUsers() []User {
 	var Users []User
-	db.Find(&Users)
+	Db.Find(&Users)
 	return Users
 }
 
 func GetUserById(Id int64) (*User, *gorm.DB) {
 	var getUser User
-	db := db.Where("ID=?", Id).Find(&getUser)
+	db := Db.Where("ID=?", Id).Find(&getUser)
 	return &getUser, db
 }
 
 func (u *User) Login() string {
 	var getUser User
-	db.Where("user_name=? AND password=?", u.UserName, u.Password).Find(&getUser)
+	Db.Where("user_name=? AND password=?", u.UserName, u.Password).Find(&getUser)
 	if getUser.UserName == u.UserName && u.Password == getUser.Password {
 		return "successfully logged in"
 	}
@@ -66,6 +65,6 @@ func (u *User) Login() string {
 
 func DeleteUser(ID int64) User {
 	var user User
-	db.Where("ID=?", ID).Delete(user)
+	Db.Where("ID=?", ID).Delete(user)
 	return user
 }

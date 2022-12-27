@@ -5,30 +5,27 @@ import (
 	"github.com/Akishleroy/go-bookstore/pkg/config"
 	validation "github.com/go-ozzo/ozzo-validation"
 	"github.com/jinzhu/gorm"
-	"time"
 )
 
 type Booking struct {
 	gorm.Model
-	UserID int       `json:"userid"`
-	FlatId int       `json:"flatid"`
-	Time   time.Time `json:"timeid"`
-	//User   *User     // поменять json
-	//Flat   *Flat     // поменять json
+	UserId uint       `json:"userid"`
+	FlatId uint       `json:"flatid"`
+	StartDate   string `json:"start_date"`
+	EndDate string `json:"end_date"`
 }
 
 func (b Booking) Validate() error {
 	return validation.ValidateStruct(&b,
-		validation.Field(&b.UserID, validation.Required),
-		validation.Field(&b.FlatId, validation.Required),
-		//validation.Field(&b.Time, validation.Required),
+		validation.Field(&b.StartDate, validation.Required),
+		validation.Field(&b.EndDate, validation.Required),
 	)
 }
 
 func init() {
 	config.Connect()
-	db = config.GetDB()
-	db.AutoMigrate(&Booking{})
+	Db = config.GetDB()
+	Db.AutoMigrate(&Booking{})
 }
 
 func (b *Booking) CreateBooking() error {
@@ -37,8 +34,8 @@ func (b *Booking) CreateBooking() error {
 		return err
 	} else {
 		fmt.Printf("err = %T\n", err)
-		db.NewRecord(b)
-		db.Create(&b)
+		Db.NewRecord(b)
+		Db.Create(&b)
 		return err
 	}
 
@@ -46,24 +43,24 @@ func (b *Booking) CreateBooking() error {
 
 func GetAllBookings() []Booking {
 	var Bookings []Booking
-	db.Find(&Bookings)
+	Db.Find(&Bookings)
 	return Bookings
 }
 
 func GetAllBookingsByUserId(Id int64) []Booking {
 	var getBooking []Booking
-	db.Where("user_id=?", Id).Find(&getBooking)
+	Db.Where("user_id=?", Id).Find(&getBooking)
 	return getBooking
 }
 
 func GetBookingById(Id int64) (*Booking, *gorm.DB) {
 	var getBooking Booking
-	db := db.Where("ID=?", Id).Find(&getBooking)
+	db := Db.Where("ID=?", Id).Find(&getBooking)
 	return &getBooking, db
 }
 
 func DeleteBooking(ID int64) Booking {
 	var book Booking
-	db.Where("ID=?", ID).Delete(book)
+	Db.Where("ID=?", ID).Delete(book)
 	return book
 }
