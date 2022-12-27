@@ -7,12 +7,12 @@ import (
 
 var RegisterFlatRoutes = func(router *mux.Router) {
 	//flat
-	router.HandleFunc("/flat", controllers.CreateFlat).Methods("POST")
+	router.HandleFunc("/flat", canEdit(controllers.CreateFlat)).Methods("POST")
 	router.HandleFunc("/flat", controllers.GetFlat).Methods("GET")
 	router.HandleFunc("/flat/{flatId}", controllers.GetFlatById).Methods("GET")
 	router.HandleFunc("/flats/filter", controllers.GetFlatsByFilter).Methods("GET")
-	router.HandleFunc("/flat/{flatId}", controllers.UpdateFlat).Methods("PUT")
-	router.HandleFunc("/flat/{flatId}", controllers.DeleteFlat).Methods("DELETE")
+	router.HandleFunc("/flat/{flatId}", canEdit(controllers.UpdateFlat)).Methods("PUT")
+	router.HandleFunc("/flat/{flatId}", canEdit(controllers.DeleteFlat)).Methods("DELETE")
 
 	//user
 	router.HandleFunc("/user", controllers.CreateUser).Methods("POST")

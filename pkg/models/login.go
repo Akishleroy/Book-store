@@ -15,7 +15,7 @@ func (l *LoginInput) Login() (User, string, error) {
 	fmt.Println(l.UserName, l.Password)
 	Db.Where("user_name=? AND password=?", l.UserName, l.Password).Find(&getUser)
 	if getUser.UserName == l.UserName && l.Password == getUser.Password {
-		token, err := jwt.CreateToken(getUser.ID)
+		token, err := jwt.CreateToken(getUser.ID, getUser.UserType)
 		tokenModel := &Token{
 			UserID: getUser.ID,
 			Token:  token,

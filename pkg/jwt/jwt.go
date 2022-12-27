@@ -18,12 +18,13 @@ type ServerTokens struct {
 	accessTTL    int
 }
 
-func CreateToken(userId uint) (string, error) {
+func CreateToken(userId uint, userRole uint) (string, error) {
 	accessTokenExp := time.Now().Add(time.Minute * time.Duration(86400)).Unix()
 
 	accessTokenClaims := jwt.MapClaims{}
 	accessTokenClaims["id"] = userId
 	accessTokenClaims["iat"] = time.Now().Unix()
+	accessTokenClaims["userType"] = userRole
 	accessTokenClaims["exp"] = accessTokenExp
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessTokenClaims)
 
@@ -32,7 +33,7 @@ func CreateToken(userId uint) (string, error) {
 	return signedAccessToken, nil
 }
 
-func ExtractToken(tokenStr string) (uint, error) {
+func ExtractToken(tokenStr string) (uint, uint, error) {
 
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -42,19 +43,20 @@ func ExtractToken(tokenStr string) (uint, error) {
 	})
 
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if ok && token.Valid {
 		userId, ok := claims["id"].(float64)
+		userType, ok := claims["userType"].(float64)
 		if !ok {
-			return 0, fmt.Errorf("No such key 'id'")
+			return 0, 0, fmt.Errorf("No such key 'id'")
 		}
 
-		return uint(userId), nil
+		return uint(userId), uint(userType), nil
 	}
 
-	return 0, fmt.Errorf("Invalid token. Map claims not found")
+	return 0, 0, fmt.Errorf("Invalid token. Map claims not found")
 }

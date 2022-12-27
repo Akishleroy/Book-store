@@ -62,18 +62,16 @@ func CreateBooking(w http.ResponseWriter, r *http.Request) {
 	flatId := vars["flatId"]
 	var header = r.Header.Get("Authorization")
 
-	userId, _ := jwt.ExtractToken(header[7:])
+	userId, _, _ := jwt.ExtractToken(header[7:])
 	flatID, err := strconv.ParseInt(flatId, 0, 0)
 	if err != nil {
 		fmt.Println("error while parsing")
 	}
 	var bookings []models.Booking
-	//fmt.Println("Flag %d", userId )
 
 	models.Db.Where("flat_id=?", flatID).Find(&bookings)
 	fmt.Println(bookings)
 	if (len(bookings) != 0){
-		//fmt.Println("ANOTHER %d", userId )
 		for i := 0; i < len(bookings); i++ {
 			start_date, _:= time.Parse("2006-01-02", bookings[i].StartDate)
 			end_date, _:= time.Parse("2006-01-02", bookings[i].StartDate)
@@ -87,8 +85,6 @@ func CreateBooking(w http.ResponseWriter, r *http.Request) {
 	} else {
 		CreateBooking.UserId = userId
 		CreateBooking.FlatId = uint(flatID)
-		//utils.ParseBody(r, CreateBooking)
-		//fmt.Println(CreateBooking)
 		b := CreateBooking.CreateBooking()
 		res, _ := json.Marshal(b)
 		w.WriteHeader(http.StatusOK)
@@ -98,24 +94,6 @@ func CreateBooking(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//	func CreateBooking(w http.ResponseWriter, r *http.Request) {
-//		CreateBooking := &models.Booking{}
-//		pass, err := bcrypt.GenerateFromPassword([]byte(CreateBooking.Password), bcrypt.DefaultCost)
-//		if err != nil {
-//			fmt.Println(err)
-//			err := ErrorResponse{
-//				Err: "Password Encryption  failed",
-//			}
-//			json.NewEncoder(w).Encode(err)
-//		}
-//
-//		CreateBooking.Password = string(pass)
-//		utils.ParseBody(r, CreateBooking)
-//		u := CreateBooking.CreateBooking()
-//		res, _ := json.Marshal(u)
-//		w.WriteHeader(http.StatusOK)
-//		w.Write(res)
-//	}
 func DeleteBooking(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	bookingId := vars["bookingId"]

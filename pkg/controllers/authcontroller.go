@@ -11,7 +11,6 @@ import (
 func Login(w http.ResponseWriter, r *http.Request) {
 	user := &models.LoginInput{}
 	utils.ParseBody(r, user)
-	//fmt.Println(user.UserName, user.Password)
 
 	l, _, err := user.Login()
 	if err != nil {
@@ -20,5 +19,4 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	res, _ := json.Marshal(l)
 	w.WriteHeader(http.StatusOK)
 	w.Write(res)
-	//fmt.Println(token)
 }
